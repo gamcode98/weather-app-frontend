@@ -7,13 +7,11 @@ import './index.css'
 import { WeatherProvider } from './contexts/WeatherContext.jsx'
 
 ReactDOM.createRoot(document.getElementById('root')).render(
-  <React.StrictMode>
-    <UserProvider>
-      <WeatherProvider>
-        <BrowserRouter>
-          <App />
-        </BrowserRouter>
-      </WeatherProvider>
-    </UserProvider>
-  </React.StrictMode>
+  <UserProvider>
+    <WeatherProvider>
+      <BrowserRouter>
+        <App />
+      </BrowserRouter>
+    </WeatherProvider>
+  </UserProvider>
 )

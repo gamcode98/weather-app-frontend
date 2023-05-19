@@ -1,3 +1,38 @@
+.skeleton {
+  position: relative;
+  /* background-color: #cacaca; */
+  border-radius: .5rem;
+  overflow: hidden;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.skeleton.city-name {
+  width: 280px;
+  height: 50px;
+}
+
+.skeleton:after {
+  content: "";
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  top: 0;
+  left: 0;
+  background: linear-gradient(110deg, rgba(227, 227, 227, 0) 0%, rgba(227, 227, 227, 0) 40%, rgba(227, 227, 227, 0.5) 50%, rgba(227, 227, 227, 0) 60%, rgba(227, 227, 227, 0) 100%);
+  animation: gradient-animation_2 1.2s linear infinite;
+}
+
+@keyframes gradient-animation_2 {
+  0% {
+    transform: translateX(-100%);
+  }
+
+  100% {
+    transform: translateX(100%);
+  }
+}
+
 .weather-card-detail {
   text-align: center;
   color: var(--text);
@@ -20,6 +55,10 @@
   z-index: -3;
 }
 
+.current-weather.empty {
+  height: 164px;
+}
+
 .current-date {
   padding: 0.5rem;
   border-radius: 1rem;
@@ -32,15 +71,43 @@
   backdrop-filter: blur(20px);
 }
 
+.current-date.empty {
+  width: 120px;
+  height: 30px;
+}
+
 .current-weather-description {
   margin-bottom: 0;
   margin-top: -0.5rem;
+}
+
+.current-weather-description.empty {
+  width: 45%;
+  height: 2rem;
+  display: block;
+  box-shadow: 0 25px 45px rgba(0, 0, 0, 0.1);
+  border: 1px solid rgba(255, 255, 255, 0.5);
+  border-right: 1px solid rgba(255, 255, 255, 0.2);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+  border-radius: .5rem;
+  margin-bottom: 1rem;
 }
 
 .current-temperature {
   font-size: 3rem;
   margin-bottom: 1rem;
   margin-top: 0;
+}
+
+.current-temperature.empty {
+  width: 60%;
+  height: 3rem;
+  display: block;
+  box-shadow: 0 25px 45px rgba(0, 0, 0, 0.1);
+  border: 1px solid rgba(255, 255, 255, 0.5);
+  border-right: 1px solid rgba(255, 255, 255, 0.2);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+  border-radius: .5rem;
 }
 
 .weather-img {
@@ -51,6 +118,17 @@
   margin-top: -7.5rem;
   margin-bottom: -4rem;
   position: relative;
+}
+
+.weather-img.empty {
+  width: 200px;
+  height: 100px;
+  margin-top: -1.5rem;
+  box-shadow: 0 25px 45px rgba(0, 0, 0, 0.1);
+  border: 1px solid rgba(255, 255, 255, 0.5);
+  border-right: 1px solid rgba(255, 255, 255, 0.2);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+  border-radius: .5rem;
 }
 
 .extra-variables {
@@ -217,3 +295,4 @@
     order: 2;
   }
 }
+

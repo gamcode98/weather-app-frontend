@@ -1,122 +1,54 @@
 import './CardDetails.css'
 import { FaWind, FaTint, FaThermometerThreeQuarters } from 'react-icons/fa'
 import { motion } from 'framer-motion'
-import { useEffect, useState } from 'react'
 import { useLocation } from 'react-router-dom'
-import { getAllWeatherIcons } from '../../services/weatherImages'
-import { getDetailsWeather } from '../../services/weathers'
-import { useLocalStorage } from '../../hooks/useLocalStorage'
-import { initialValueToWeatherApp, weatherAppKey } from '../../utils/consts'
-import { useCurrentUser } from '../../hooks/useCurrentUser'
+import { useDetailWeather } from '../../hooks/useDetailWeather'
 
 export function CardDetails () {
   const location = useLocation()
   const { weather } = location.state
-  const [weatherInformation, setWeatherInformation] = useState(weather)
-  const [currentInfo, setCurrentInfo] = useState({})
-  const [todayData, setTodayData] = useState([])
-  const [nextDaysData, setNextDaysData] = useState([])
-  const { storedValue } = useLocalStorage(weatherAppKey, initialValueToWeatherApp)
-  const { setCurrentUser } = useCurrentUser()
-
-  useEffect(() => {
-    setCurrentUser(storedValue.user)
-    getInfoToShow(weather)
-  }, [])
-
-  const getInfoToShow = (value) => {
-    getAllWeatherIcons()
-      .then((icons) => {
-        const getImage = (code, time = 7) => {
-          const found = icons.find((item) => item.code === code)
-          if (+time > 19 || +time < 7) return found.night.path
-          return found.day.path
-        }
-
-        const getImageDescription = (code) => {
-          const found = icons.find((item) => item.code === code)
-          return found.description[0]
-        }
-
-        getDetailsWeather({ latitude: weather.latitude, longitude: weather.longitude })
-          .then((data) => {
-            setWeatherInformation({ ...data, cityName: value.cityName })
-
-            const foundIndex = data.hourly.time.findIndex(
-              (item) => item === data.current_weather.time
-            )
-
-            const time = new Date(data.current_weather.time)
-
-            setCurrentInfo({
-              time: time.toDateString(),
-              relativeHumidity: data.hourly.relativehumidity_2m[foundIndex],
-              apparentTemperature: data.hourly.apparent_temperature[foundIndex],
-              description: getImageDescription(
-                data.current_weather.weathercode
-              ),
-              weatherImage: getImage(
-                data.current_weather.weathercode,
-                data.current_weather.time.slice(11, 13)
-              )
-            })
-
-            const timeFiltered = data.hourly.time.filter(item => {
-              return item.slice(0, 10) === data.current_weather.time.slice(0, 10)
-            })
-
-            const todayWeather = timeFiltered.map((item, index) => ({
-              time: data.hourly.time[index].slice(11),
-              temperature: data.hourly.temperature_2m[index],
-              weatherImage: getImage(
-                data.hourly.weathercode[index],
-                data.hourly.time[index].slice(11, 13)
-              )
-            }))
-
-            setTodayData(todayWeather)
-
-            const forecastNextDays = data.daily.time.map((item, index) => ({
-              time: parseDate(data.daily.time[index]),
-              weatherImage: getImage(data.daily.weathercode[index]),
-              temperatureMax: data.daily.temperature_2m_max[index],
-              temperatureMin: data.daily.temperature_2m_min[index],
-              description: getImageDescription(data.daily.weathercode[index])
-            }))
-
-            setNextDaysData(forecastNextDays)
-          })
-          .catch((error) => console.log(error))
-      })
-      .catch((error) => console.log(error))
-  }
-
-  const parseDate = (date) => {
-    const time = new Date(date)
-    return time.toString().slice(0, 3)
-  }
+  const {
+    currentInfo,
+    nextDaysData,
+    todayData,
+    weatherInformation,
+    isLoading
+  } = useDetailWeather({ weather })
 
   return (
     <section className='weather-card-detail'>
       <div className='left'>
-        <h4 className='city-name'>{weatherInformation?.cityName}</h4>
-        <div className='current-weather glassmorphism'>
-          <span className='current-date'>{currentInfo.time}</span>
-          <p className='current-weather-description'>
-            {currentInfo.description}
-          </p>
-          <h2 className='current-temperature'>
-            {weatherInformation?.current_weather &&
-              weatherInformation?.current_weather.temperature}
-            {weatherInformation?.temperature && weatherInformation?.temperature}
-            °C
-          </h2>
-        </div>
-        <img
-          className='weather-img'
-          src={currentInfo.weatherImage}
-          alt='icon weather'
-        />
+        {isLoading
+          ? (
+            <>
+              <div className='skeleton city-name' />
+              <div className='current-weather empty glassmorphism'>
+                <span className='current-date empty skeleton' />
+                <span className='current-weather-description empty skeleton' />
+                <h2 className='current-temperature empty skeleton' />
+              </div>
+              <div className='weather-img empty skeleton glassmorphism' />
+            </>
+            )
+          : (
+            <>
+              <h4 className='city-name'>{weatherInformation.cityName}</h4>
+              <div className='current-weather glassmorphism'>
+                <span className='current-date'>{currentInfo.time}</span>
+                <p className='current-weather-description'>
+                  {currentInfo.description}
+                </p>
+                <h2 className='current-temperature'>
+                  {weatherInformation?.current_weather?.temperature}°C
+                </h2>
+              </div>
+              <img
+                className='weather-img'
+                src={currentInfo.weatherImage}
+                alt='icon weather'
+              />
+            </>
+            )}
       </div>
 
       <div className='right'>
